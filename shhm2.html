@@ -1,0 +1,284 @@
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>심리테스트 - 인문학 추천</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            position: relative;
+        }
+
+        /* 겉표지 화면 */
+        .cover-container {
+            text-align: center;
+            padding: 15% 0;
+            height: 100vh;
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        .cover-title {
+            font-size: 33.6px; /* 기존 48px에서 30% 축소 */
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .start-btn {
+            background-color: #f57c00; /* 주황색 */
+            color: white;
+            border: none;
+            padding: 10px 20px; /* 기존 20px 40px에서 30% 축소 */
+            cursor: pointer;
+            border-radius: 25px;
+            font-size: 16.8px; /* 기존 24px에서 30% 축소 */
+            transition: background-color 0.3s ease;
+        }
+
+        .start-btn:hover {
+            background-color: #e65100; /* 어두운 주황색 */
+        }
+
+        /* 오른쪽 상단 텍스트 */
+        .header-text {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 11.2px; /* 기존 16px에서 30% 축소 */
+            font-weight: bold;
+            color: #2f3e9e;
+        }
+
+        /* 질문 및 선택지 레이아웃 */
+        .question-container {
+            text-align: center;
+            padding: 5% 10%;
+            height: 100vh;
+            box-sizing: border-box;
+            display: none;
+        }
+
+        .question {
+            font-size: 17.6px; /* 기존 25.2px에서 70% 축소 */
+            font-weight: bold;
+            margin-bottom: 40px;
+            color: #2f3e9e;
+        }
+
+        .answers {
+            margin-bottom: 50px;
+        }
+
+        .answer {
+            background-color: navy; /* 남색 */
+            padding: 12px 24px; /* 기존 20px 40px에서 30% 축소 */
+            margin: 20px;
+            border: none;
+            color: #fff;
+            font-size: 16.8px; /* 기존 24px에서 30% 축소 */
+            cursor: pointer;
+            border-radius: 25px;
+            width: 70%; /* 버튼 너비를 더 줄여서 모바일에서 적당히 보이도록 */
+            transition: background-color 0.3s ease;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .answer.selected {
+            background-color: #1e3b5f; /* 선택된 버튼 색상 */
+        }
+
+        .answer:hover {
+            background-color: #000080; /* 더 어두운 남색 */
+        }
+
+        .btn {
+            background-color: #f57c00; /* 주황색 */
+            color: white;
+            border: none;
+            padding: 12px 24px; /* 기존 20px 40px에서 30% 축소 */
+            cursor: pointer;
+            border-radius: 25px;
+            font-size: 16.8px; /* 기존 24px에서 30% 축소 */
+            width: 70%; /* 버튼 너비를 더 줄여서 모바일에서 적당히 보이도록 */
+            margin: 30px auto;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #e65100; /* 어두운 주황색 */
+        }
+
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .result-title {
+            font-size: 25.2px; /* 기존 36px에서 30% 축소 */
+            font-weight: bold;
+            color: #2f3e9e;
+        }
+
+        .result-description {
+            font-size: 16.8px; /* 기존 24px에서 30% 축소 */
+            margin-top: 30px;
+        }
+
+        /* 모바일 환경에 대한 추가 스타일 */
+        @media screen and (max-width: 600px) {
+            .answer, .btn {
+                padding: 10px 18px; /* 버튼 패딩을 더 줄여서 모바일에서 자연스럽게 보이도록 */
+                font-size: 14px; /* 모바일 화면에서 글씨 크기도 줄임 */
+                width: 80%; /* 모바일에서 버튼을 더 넓게 */
+            }
+
+            .cover-title {
+                font-size: 26px; /* 모바일에서 타이틀 폰트도 작게 */
+            }
+
+            .question {
+                font-size: 12.3px; /* 모바일에서 질문 글씨 크기도 줄여줌 */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 겉표지 -->
+    <div id="cover" class="cover-container">
+        <div class="cover-title">인문학 큐레이션 by 신한인의 시선</div>
+        <button id="start-btn" class="start-btn" onclick="startQuiz()">시작</button>
+    </div>
+
+    <!-- 질문지 화면 -->
+    <div id="quiz" class="question-container">
+        <div id="question-container">
+            <!-- Question and answers will be dynamically injected here -->
+        </div>
+        <button id="next-btn" class="btn" style="display:none;" onclick="nextQuestion()">다음</button>
+        <button id="result-btn" class="btn" style="display:none;" onclick="showResult()">결과보기</button>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="result" class="result-container">
+        <h2 class="result-title">추천 인문학</h2>
+        <p id="recommended-book" class="result-description"></p>
+    </div>
+
+    <div class="header-text">인문학 큐레이션 by 신한인의 시선</div>
+
+    <script>
+        const questions = [
+            {
+                question: "Q1.상사가 '우리 내일까지 보고서 만들어야겠지?'라고 말하면 나는?",
+                options: ["A. 이미 머릿속에 초안과 목차가 떠오른다.", "B. '내일...까지요?' 하고 잠시 숨 고른다."]
+            },
+            {
+                question: "Q2. 점심 메뉴를 고르는 상황에서 나는?",
+                options: ["A. 일주일 치 메뉴를 미리 정리해 둔다.", "B. '그냥 아무거나!'라고 해놓고, 막상 메뉴가 나오면 마음에 안 든다."]
+            },
+            {
+                question: "Q3. 회식 자리에서 동료가 갑자기 노래를 부르자고 하면?",
+                options: ["A. 조용히 박수치며 화장실 갈 타이밍을 찾는다.", "B. '무슨 노래 부를까?'라며 앞자리로 나간다."]
+            },
+            {
+                question: "Q4. 메일에 답장할 때, 내 스타일은?",
+                options: ["A. 제목, 본문, 인사말까지 완벽히 구성해 보내야 직성이 풀린다.", "B. '넵' 한 글자도 충분하다고 생각한다."]
+            },
+            {
+                question: "Q5. 내가 연차 쓰고 하고 싶은 것은?",
+                options: ["A. 고요한 산과 숲, 조용한 곳에서 힐링", "B. 사람들이 많은 명소를 돌아다닌다."]
+            },
+            {
+                question: "Q6. 동료가 과제를 맡기고 '잘 해봐'라고 했을 때, 나는?",
+                options: ["A. 시작 전에 전체 계획을 세운다.", "B. 과제를 받자마자 바로 시작한다."]
+            },
+            {
+                question: "Q7. 소셜 미디어에 올릴 때, 나는?",
+                options: ["A. 사진을 잘 찍고, 캡션까지 신경쓴다.", "B. 그냥 자연스럽게 찍은 사진을 올린다."]
+            },
+            {
+                question: "Q8. 발표 준비를 할 때, 나는?",
+                options: ["A. 발표 내용을 철저히 준비해 10장으로 깔끔히 정리하며 발표 문구까지 작성한다.", "B. '이건 대충 이런 내용으로 가자.' 하며 대충 발표 준비를 한다."]
+            },
+            {
+                question: "Q9. 출장 갔다 와서 동료에게 소식을 전할 때, 나는?",
+                options: ["A. '회의가 어땠는지? 출장지에서는 이랬어!'라고 구체적으로 말한다.", "B. '좋았어!'라고만 간단히 전한다."]
+            },
+            {
+                question: "Q10. 주말에 친구들과 함께 가고 싶은 곳은?",
+                options: ["A. 미술관이나 도서관, 여유롭게 책을 읽을 수 있는 곳.", "B. 커피숍에서 소소한 이야기를 나누고 싶은 곳."]
+            }
+        ];
+
+        const books = [
+            { title: "죽음에 관하여", description: "죽음을 어떻게 이해할 것인가에 대한 철학적 탐구." },
+            { title: "이별 후에도 계속", description: "이별의 복잡한 감정을 탐구하며, 인간 존재의 근본적인 고독을 그립니다." },
+            { title: "다니엘 아샴 (서울 3024)", description: "미래를 기반으로 한 독특한 시각을 제시하는 작품입니다." },
+            { title: "사랑과 죽음의 성", description: "역사를 이해하고 기억하는 것이 우리 삶에 어떤 가치를 더하는지 고민하는 책입니다." }
+        ];
+
+        let currentQuestionIndex = 0;
+        let selectedAnswers = [];
+
+        function startQuiz() {
+            document.getElementById("cover").style.display = 'none';
+            document.getElementById("quiz").style.display = 'block';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            document.getElementById("question-container").innerHTML = `
+                <div class="question">${question.question}</div>
+                <div class="answers">
+                    <button class="answer" onclick="selectAnswer('A', this)">${question.options[0]}</button>
+                    <button class="answer" onclick="selectAnswer('B', this)">${question.options[1]}</button>
+                </div>
+            `;
+        }
+
+        function selectAnswer(answer, button) {
+            // 선택된 버튼에 색상 추가 (하늘색으로 변함)
+            const allAnswers = document.querySelectorAll('.answer');
+            allAnswers.forEach((btn) => btn.classList.remove('selected'));
+
+            // 클릭된 버튼의 색상을 하늘색으로 변경
+            button.style.backgroundColor = 'skyblue';
+
+            selectedAnswers.push(answer);
+
+            if (currentQuestionIndex === 9) {
+                document.getElementById("next-btn").style.display = 'none'; // Q10에서 다음 버튼 숨김
+                document.getElementById("result-btn").style.display = 'block'; // 결과 버튼 보이기
+            } else {
+                document.getElementById("next-btn").style.display = 'block'; // 다음 버튼 보이기
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+            document.getElementById("next-btn").style.display = 'none'; // Hide next button
+        }
+
+        function showResult() {
+            document.getElementById("quiz").style.display = 'none';
+            document.getElementById("result").style.display = 'block';
+            const randomBook = books[Math.floor(Math.random() * books.length)];
+            document.getElementById("recommended-book").innerHTML = `
+                <strong>${randomBook.title}</strong><br>
+                ${randomBook.description}
+            `;
+        }
+    </script>
+</body>
+</html>
